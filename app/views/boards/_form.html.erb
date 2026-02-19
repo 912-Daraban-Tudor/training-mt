@@ -1,0 +1,47 @@
+<%= form_with(model: board) do |form| %>
+  <% if board.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(board.errors.count, "error") %> prohibited this board from being saved:</h2>
+
+      <ul>
+        <% board.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name, style: "display: block" %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div>
+    <%= form.label :user_id, style: "display: block" %>
+    <%= form.text_field :user_id %>
+  </div>
+
+  <div style="margin: 20px 0;">
+    <strong>Select Columns for this Board:</strong><br>
+
+    <%= form.collection_check_boxes :column_ids, Column.all, :id , :name do |f| %>
+      <div style="margin-top: 5px;">
+        <%= f.check_box %>
+        <%= f.label do %>
+          <%= f.text %> (ID: <%= f.value %>)
+          <%end%>
+      </div>
+    <% end %>
+  </div>
+
+  <% if board %>
+    <div style="margin: 20px 0 10px 0;">
+      <%= form.check_box :archived %>
+      <%= form.label :archived, "Archive this board" %>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

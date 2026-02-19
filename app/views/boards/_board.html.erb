@@ -1,0 +1,17 @@
+<div id="<%= dom_id board %>"
+     style="border: solid; padding: 30px 30px 30px 30px; margin-bottom: 15px; min-width: 200px; max-width: 31%">
+  <h2 style="margin-top: 0;"><%= board.name %> - owner: <%= board.user.name %></h2>
+
+  <p>
+    <strong>Columns:</strong>
+    <% if board.columns.any? %>
+      <%= board.columns.map(&:name).join(" - ") %>
+    <% else %>
+      No columns selected
+    <% end %>
+  </p>
+
+  <div>
+    <%= link_to "Open Board", board_path(board), style: "font-weight: bold;" %>
+  </div>
+</div>

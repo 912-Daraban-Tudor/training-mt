@@ -1,0 +1,12 @@
+<% content_for :title, "Editing column" %>
+
+<h1>Editing column</h1>
+
+<%= render "form", column: @column %>
+
+<br>
+
+<div>
+  <%= link_to "Show this column", @column %> |
+  <%= link_to "Back to columns", columns_path %>
+</div>

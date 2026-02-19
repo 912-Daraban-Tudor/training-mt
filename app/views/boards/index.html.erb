@@ -1,0 +1,13 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Boards" %>
+
+<h1>Boards</h1>
+
+<div id="boards" style="display: grid">
+  <% @boards.each do |board| %>
+    <%= render board %>
+  <% end %>
+</div>
+
+<%= link_to "New board", new_board_path %>
