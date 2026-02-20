@@ -1,0 +1,27 @@
+<div id="<%= dom_id role %>" style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+  <p>
+    <strong>Name:</strong>
+    <%= role.name %>
+  </p>
+
+  <p>
+    <strong>Permissions:</strong>
+    <% if role.app_actions.any? %>
+    <ul>
+      <% role.app_actions.each do |action| %>
+        <li><%= action.name %></li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No permissions assigned yet.</p>
+  <% end %>
+  </p>
+
+  <div>
+    <%= link_to "Show", role %>
+
+    <% if policy(role).update? %>
+      | <%= link_to "Edit", edit_role_path(role) %>
+    <% end %>
+  </div>
+</div>

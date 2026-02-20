@@ -4,10 +4,12 @@ class UsersController < ApplicationController
   # GET /users or /users.json
   def index
     @users = User.all
+    authorize User
   end
 
   # GET /users/1 or /users/1.json
   def show
+    authorize @user
   end
 
   # GET /users/new
@@ -17,6 +19,7 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
+    authorize @user
   end
 
   # POST /users or /users.json
@@ -36,6 +39,7 @@ class UsersController < ApplicationController
 
   # PATCH/PUT /users/1 or /users/1.json
   def update
+    authorize @user
     respond_to do |format|
       if @user.update(user_params)
         format.html { redirect_to @user, notice: "User was successfully updated.", status: :see_other }
@@ -65,6 +69,16 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:name, :email)
+      permitted = params.require(:user).permit(:name, :email, role_ids: [])
+
+      if permitted[:role_ids]
+        admin_role_id = Role.find_by(name: 'Admin')&.id&.to_s
+
+        if admin_role_id
+          permitted[:role_ids].delete(admin_role_id)
+          permitted[:role_ids] << admin_role_id if @user.admin?
+        end
+      end
+      permitted
     end
 end

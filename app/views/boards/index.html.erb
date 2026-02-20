@@ -5,9 +5,15 @@
 <h1>Boards</h1>
 
 <div id="boards" style="display: grid">
-  <% @boards.each do |board| %>
-    <%= render board %>
+  <% if  policy(Role).show? %>
+    <% @boards.each do |board| %>
+      <%= render board %>
+    <% end %>
+  <% else %>
+    You are not authorized
   <% end %>
+
 </div>
 
 <%= link_to "New board", new_board_path %>
+

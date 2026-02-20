@@ -16,7 +16,7 @@ class Column < ApplicationRecord
     VALID_STATUSES[4] => [Story::VALID_STATUSES[6]]
   }
 
-  validates :name, :status, :position, presence: true
+  validates :name, :status, presence: true
   validates :status, inclusion: {
     in: VALID_STATUSES
   }

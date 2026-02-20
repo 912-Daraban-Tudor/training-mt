@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @app_action %>
+
+<div>
+  <%= link_to "Edit this app action", edit_app_action_path(@app_action) %> |
+  <%= link_to "Back to app actions", app_actions_path %>
+
+  <%= button_to "Destroy this app action", @app_action, method: :delete %>
+</div>

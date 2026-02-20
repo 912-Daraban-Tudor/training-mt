@@ -5,7 +5,7 @@ class Story < ApplicationRecord
 
   VALID_STATUSES = %w[icebox backlog pending in_progress finished delivered archived]
 
-  validates :title, :status, :due_date, :board_id, presence: true
+  validates :title, :status, :board_id, presence: true
 
   validates :status, inclusion: {
     in: VALID_STATUSES

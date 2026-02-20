@@ -1,12 +1,16 @@
 require "sidekiq/web"
 
 Rails.application.routes.draw do
+  resources :app_actions
+  resources :roles
+  devise_for :users
   mount Sidekiq::Web => "/sidekiq"
 
   resources :stories
   resources :columns
   resources :boards
   resources :users
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

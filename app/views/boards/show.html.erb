@@ -4,25 +4,43 @@
   <h1><%= @board.name %> - </h1>
 
   <div style="padding: 35px 20px 20px 15px">
-    <%= link_to "Edit Board", edit_board_path(@board) %> |
+    <% if policy(@board).update? %>
+      <%= link_to "Edit", edit_board_path(@board) %>
+    <% end %> |
     <%= link_to "Back to Boards", boards_path %>
   </div>
 </div>
 
 <div style="display: flex; flex-direction: row; justify-content: space-around ">
-  <% @ordered_columns.each do |column| %>
+  <% @ordered_columns.each_with_index do |column, index| %>
+    <% current_position = index + 1 %>
 
-    <div style="border: solid; border-color: #2E2F30; padding: 20px 20px 20px 20px; margin: 3px 3px 3px 3px; scroll-behavior: auto; min-width: 15%; max-width: 23%">
-      <h3>
-        <%= column.name %>
-      </h3>
+    <div style="border: solid; border-color: #2E2F30; padding: 20px; margin: 3px; scroll-behavior: auto; min-width: 15%; max-width: 23%">
 
+      <div style="display: flex; justify-content: space-between; align-items: center;">
 
+        <div>
+          <% if current_position > 1 %>
+            <%= button_to "<", board_path(@board), method: :patch, params: { reorder: { column_id: column.id, target_position: current_position - 1 } } %>
+          <% end %>
+        </div>
 
+        <h3><%= column.name %></h3>
+
+        <div>
+          <% if current_position < @ordered_columns.length %>
+            <%= button_to ">", board_path(@board), method: :patch, params: { reorder: { column_id: column.id, target_position: current_position + 1 }  } %>
+          <% end %>
+        </div>
+
+      </div>
       <% column.stories(@board).each do |story| %>
 
-        <div style=" margin: 2px 1px 2px 1px; border: solid; border-width: thin; border-color: #730E15; padding: 5px 5px 5px 5px">
-          <strong><%= story.title %></strong>
+        <div style="margin: 2px 1px; border: solid; border-width: thin; border-color: #730E15; padding: 5px;">
+
+          <strong>
+            <%= story.title %>
+          </strong>
 
           <p>
             <%= story.description %>
@@ -37,11 +55,10 @@
             <%= link_to "Delete", story, data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } %>
           </div>
         </div>
-
       <% end %>
 
-      <div>
-        <%= link_to "+ Add Story", new_story_path(board_id: @board.id)%>
+      <div style="margin-top: 10px;">
+        <%= link_to "+ Add Story", new_story_path(board_id: @board.id) %>
       </div>
 
     </div>

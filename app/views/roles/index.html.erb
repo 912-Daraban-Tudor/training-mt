@@ -1,0 +1,15 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Roles" %>
+
+<h1>Roles</h1>
+
+<div id="roles" style="display: grid">
+  <% @roles.each do |role| %>
+    <%= render role %>
+  <% end %>
+</div>
+
+<% if  policy(Role).create? %>
+<%= link_to "New role", new_role_path %>
+<% end %>

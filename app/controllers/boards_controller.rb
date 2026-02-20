@@ -1,19 +1,23 @@
 class BoardsController < ApplicationController
+  include BoardsHelper
   before_action :set_board, only: %i[ show edit update destroy ]
 
   # GET /boards or /boards.json
   def index
     @boards = Board.active.includes(:user)
+    authorize Board
   end
 
   # GET /boards/1 or /boards/1.json
   def show
+    authorize @board
     @ordered_columns = @board.columns.order("board_columns.column_position ASC")
   end
 
   # GET /boards/new
   def new
     @board = Board.new
+    authorize @board
   end
 
   # GET /boards/1/edit
@@ -23,7 +27,8 @@ class BoardsController < ApplicationController
   # POST /boards or /boards.json
   def create
     @board = Board.new(board_params)
-    @board.user = User.find(board_params[:user_id]) || User.create!(name: "autocreated", email: "auto@creat.ed")
+    authorize @board
+    @board.user = current_user
 
     respond_to do |format|
       if @board.save
@@ -38,18 +43,28 @@ class BoardsController < ApplicationController
 
   # PATCH/PUT /boards/1 or /boards/1.json
   def update
+    authorize @board
+
+    if params[:reorder].present?
+      column_id = params.dig(:reorder, :column_id)
+      target_position = params.dig(:reorder, :target_position)
+
+      reorder_board_columns(column_id, target_position)
+    end
+
+
     respond_to do |format|
 
       if @board.update(board_params)
-
-        if @board.saved_change_to_archived? && @board.archived == true
-          ArchiveBoardJob.perform_async(@board.id)
-          format.html { redirect_to @boards, notice: "Board was successfully archived.", status: :see_other }
-          format.json { head :no_content }
-        else
+        #
+        # if @board.saved_change_to_archived? && @board.archived == true
+        #   ArchiveBoardJob.perform_async(@board.id)
+        #   format.html { redirect_to @boards, notice: "Board was successfully archived.", status: :see_other }
+        #   format.json { head :no_content }
+        # else
         format.html { redirect_to @board, notice: "Board was successfully updated.", status: :see_other }
         format.json { render :show, status: :ok, location: @board }
-        end
+        # end
 
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -60,6 +75,7 @@ class BoardsController < ApplicationController
 
   # DELETE /boards/1 or /boards/1.json
   def destroy
+    authorize @board
     @board.destroy!
 
     respond_to do |format|
