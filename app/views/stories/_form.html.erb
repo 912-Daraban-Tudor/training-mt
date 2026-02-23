@@ -1,8 +1,7 @@
-<%= form_with(model: story) do |form| %>
+<%= form_with(model: story, scope: :story, url: story.new_record? ? stories_path : story_path(story)) do |form| %>
   <% if story.errors.any? %>
     <div style="color: red">
       <h2><%= pluralize(story.errors.count, "error") %> prohibited this story from being saved:</h2>
-
       <ul>
         <% story.errors.each do |error| %>
           <li><%= error.full_message %></li>
@@ -11,37 +10,98 @@
     </div>
   <% end %>
 
-  <div>
+  <div class="field">
+    <p><strong>Story Type:</strong></p>
+    <% if story.new_record? %>
+      <%= form.select :type, ['Story::Feature', 'Story::Bug', 'Story::Support'], prompt: "Select Type" %>
+    <% else %>
+      <p><%= story.type&.split('::')&.last %></p>
+      <%= form.hidden_field :type, value: story.type %>
+    <% end %>
+  </div>
+
+  <div class="field" style="margin-top: 20px;">
+    <p><strong>Assign to:</strong></p>
+
+    <% is_user = story.associable_type == 'User' %>
+    <% is_board = story.associable_type == 'Board' || story.associable_type.blank? %>
+
+    <label>
+      <%= form.radio_button :associable_type, 'Board', id: 'radio_board', checked: is_board %> Board
+    </label>
+    <label>
+      <%= form.radio_button :associable_type, 'User', id: 'radio_user', checked: is_user %> User
+    </label>
+
+    <div id="board_wrap" <%= 'hidden' if is_user %>>
+      <br>
+      <%= form.label :associable_id, "Select Board", style: "display: block" %>
+      <%= form.select :associable_id, Board.all.map { |b| [b.name, b.id] }, { id: 'board_select', disabled: is_user } %>
+    </div>
+
+    <div id="user_wrap" <%= 'hidden' unless is_user %>>
+      <br>
+      <%= form.label :associable_id, "Select User", style: "display: block" %>
+      <%= form.select :associable_id, User.all.map { |u| [u.name, u.id] }, { id: 'user_select', disabled: !is_user } %>
+    </div>
+  </div>
+
+  <div class="field" style="margin-top: 20px;">
     <%= form.label :title, style: "display: block" %>
     <%= form.text_field :title %>
   </div>
 
-  <div>
+  <div class="field" style="margin-top: 20px;">
     <%= form.label :description, style: "display: block" %>
     <%= form.text_area :description %>
   </div>
 
-  <div>
+  <div class="field" style="margin-top: 20px;">
     <%= form.label :status, style: "display: block" %>
-    <%= form.text_field :status %>
+    <%= form.select :status, Story::VALID_STATUSES, prompt: "Select Status" %>
   </div>
 
-  <div>
+  <div class="field" style="margin-top: 20px;">
     <%= form.label :due_date, style: "display: block" %>
     <%= form.date_field :due_date %>
   </div>
 
-  <div>
+  <div class="field" style="margin-top: 20px;">
     <%= form.label :position, style: "display: block" %>
     <%= form.number_field :position %>
   </div>
 
-  <div>
-    <%= form.label :board_id, style: "display: block" %>
-    <%= form.text_field :board_id %>
-  </div>
-
-  <div>
+  <div class="actions" style="margin-top: 20px;">
     <%= form.submit %>
   </div>
 <% end %>
+
+<script>
+    (function() {
+        function updateUI() {
+            const radioUser = document.getElementById('radio_user');
+            const boardWrap = document.getElementById('board_wrap');
+            const userWrap = document.getElementById('user_wrap');
+            const boardSelect = document.getElementById('board_select');
+            const userSelect = document.getElementById('user_select');
+
+            if (!radioUser) return;
+
+            const isUser = radioUser.checked;
+
+            if (boardWrap) boardWrap.hidden = isUser;
+            if (userWrap) userWrap.hidden = !isUser;
+
+            if (boardSelect) boardSelect.disabled = isUser;
+            if (userSelect) userSelect.disabled = !isUser;
+        }
+
+        updateUI();
+
+        document.addEventListener('change', function(e) {
+            if (e.target.id === 'radio_board' || e.target.id === 'radio_user') {
+                updateUI();
+            }
+        });
+    })();
+</script>

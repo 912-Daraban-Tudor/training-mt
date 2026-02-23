@@ -1,5 +1,19 @@
 <div id="<%= dom_id story %>">
   <p>
+    <strong>Type:</strong>
+    <%= story.type&.split('::')&.last || 'Unknown' %>
+  </p>
+
+  <p>
+    <strong>Assigned To:</strong>
+    <% if story.associable %>
+      <%= story.associable_type %>: <strong><%= story.associable.name %></strong>
+    <% else %>
+      <em>Unassigned</em>
+    <% end %>
+  </p>
+
+  <p>
     <strong>Title:</strong>
     <%= story.title %>
   </p>
@@ -24,9 +38,5 @@
     <%= story.position %>
   </p>
 
-  <p>
-    <strong>Board:</strong>
-    <%= story.board_id %>
-  </p>
-
+  <%= link_to "Edit this story", edit_story_path(story) %> |
 </div>

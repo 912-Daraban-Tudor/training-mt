@@ -3,6 +3,7 @@ class AppAction < ApplicationRecord
   ALLOWED_ACTIONS = %w[
     view_board edit_board
     view_story edit_story
+    view_access
   ]
 
   has_many :permissions, dependent: :destroy

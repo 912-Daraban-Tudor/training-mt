@@ -1,10 +1,35 @@
-<p style="color: green"><%= notice %></p>
+<h1>User Profile</h1>
 
-<%= render @user %>
-
-<div>
-  <%= link_to "Edit this user", edit_user_path(@user) %> |
-  <%= link_to "Back to users", users_path %>
-
-  <%= button_to "Destroy this user", @user, method: :delete %>
+<div style="border-bottom: 2px solid #999; margin-bottom: 20px; padding-bottom: 5px">
+  <button onclick="openTab('profile')" id="btn_profile" style="padding: 10px;">Profile</button>
+  <button onclick="openTab('stories')" id="btn_stories" style="padding: 10px;">User's Stories</button>
 </div>
+
+<div id="tab_profile" class="tab-content" style="display: block;">
+  <p><strong>Name:</strong> <%= @user.name %></p>
+  <p><strong>Email:</strong> <%= @user.email %></p>
+  <p><strong>Roles:</strong> <%= @user.roles.map(&:name).join(", ") %></p>
+</div>
+
+<div id="tab_stories" class="tab-content" style="display: none;">
+  <h3>Stories assigned to <%= @user.name %></h3>
+  <ul>
+    <% @user.stories.each do |story| %>
+      <li>
+        <strong>[<%= story.type.split('::').last %>]</strong>
+        <%= link_to story.title, story_path(story) %> - <%= story.status %>
+      </li>
+    <% end %>
+  </ul>
+</div>
+
+<script>
+    function openTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+        document.getElementById('btn_profile').style.fontWeight = 'normal';
+        document.getElementById('btn_stories').style.fontWeight = 'normal';
+
+        document.getElementById('tab_' + tabName).style.display = 'block';
+        document.getElementById('btn_' + tabName).style.fontWeight = 'bold';
+    }
+</script>

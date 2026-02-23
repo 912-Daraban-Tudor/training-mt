@@ -8,6 +8,7 @@ class User < ApplicationRecord
   has_many :boards
   has_many :user_roles, dependent: :destroy
   has_many :roles, through: :user_roles
+  has_many :stories, as: :associable
 
   validates :name, :email, presence: true
 

@@ -52,14 +52,11 @@
 
           <div>
             <%= link_to "Edit", edit_story_path(story) %> |
-            <%= link_to "Delete", story, data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } %>
+            <%= link_to "Delete", story_path(story), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } %>
           </div>
         </div>
       <% end %>
 
-      <div style="margin-top: 10px;">
-        <%= link_to "+ Add Story", new_story_path(board_id: @board.id) %>
-      </div>
 
     </div>
   <% end %>

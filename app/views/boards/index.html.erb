@@ -5,7 +5,7 @@
 <h1>Boards</h1>
 
 <div id="boards" style="display: grid">
-  <% if  policy(Role).show? %>
+  <% if  policy(Board).index? %>
     <% @boards.each do |board| %>
       <%= render board %>
     <% end %>

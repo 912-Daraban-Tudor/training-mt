@@ -4,7 +4,7 @@ class Board < ApplicationRecord
 
   belongs_to :user
 
-  has_many :stories, dependent: :destroy
+  has_many :stories, as: :associable
 
   has_many :board_columns, dependent: :destroy
   has_many :columns, through: :board_columns
